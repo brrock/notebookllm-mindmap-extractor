@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      :root {
+        --bg: #f8f9fc;
+        --surface: #ffffff;
+        --border: #e2e4e9;
+        --border-hover: #c4c8cf;
+        --text: #1a1d23;
+        --text-secondary: #6b7280;
+        --accent: #3b82f6;
+        --accent-hover: #2563eb;
+        --accent-light: #eff6ff;
+        --success: #059669;
+        --success-bg: #ecfdf5;
+        --error: #dc2626;
+        --error-bg: #fef2f2;
+        --warning: #d97706;
+        --warning-bg: #fffbeb;
+        --info: #2563eb;
+        --info-bg: #eff6ff;
+        --radius: 10px;
+        --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      }
+
+      body {
+        width: 384px;
+        padding: 0;
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .container {
+        padding: 16px;
+      }
+
+      .header {
+        text-align: center;
+        padding: 4px 0 12px 0;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 12px;
+      }
+
+      .header h3 {
+        margin: 0;
+        font-size: 17px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        color: var(--text);
+      }
+
+      .header h3 span {
+        color: var(--accent);
+      }
+
+      .header p {
+        margin: 2px 0 0 0;
+        font-size: 12px;
+        color: var(--text-secondary);
+      }
+
+      .version-badge {
+        display: inline-block;
+        background: var(--accent-light);
+        color: var(--accent);
+        padding: 2px 8px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: 600;
+        margin-left: 6px;
+        vertical-align: middle;
+      }
+
+      .section {
+        margin-bottom: 10px;
+      }
+
+      .section-label {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--text-secondary);
+        margin-bottom: 6px;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 10px 16px;
+        border: none;
+        border-radius: var(--radius);
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        transition: all 0.15s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        box-sizing: border-box;
+      }
+
+      .btn:active {
+        transform: scale(0.98);
+      }
+
+      .btn-primary {
+        background: var(--accent);
+        color: white;
+      }
+
+      .btn-primary:hover:not(:disabled) {
+        background: var(--accent-hover);
+      }
+
+      .btn-primary:disabled {
+        background: #e2e4e9;
+        color: #9ca3af;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .btn-success {
+        background: var(--success);
+        color: white;
+      }
+
+      .btn-success:hover:not(:disabled) {
+        background: #047857;
+      }
+
+      .btn-success:disabled {
+        background: #e2e4e9;
+        color: #9ca3af;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .btn-ghost {
+        background: transparent;
+        color: var(--text-secondary);
+        border: 1px solid var(--border);
+        font-size: 12px;
+        padding: 8px 12px;
+      }
+
+      .btn-ghost:hover {
+        background: var(--bg);
+        border-color: var(--border-hover);
+        color: var(--text);
+      }
+
+      .btn-group {
+        display: flex;
+        gap: 6px;
+      }
+
+      .btn-group .btn {
+        flex: 1;
+      }
+
+      .format-selector {
+        margin: 8px 0;
+        padding: 12px;
+        background: var(--bg);
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        display: none;
+      }
+
+      .format-selector-title {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--text-secondary);
+        margin-bottom: 8px;
+      }
+
+      .format-options {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
+      }
+
+      .format-option {
+        position: relative;
+      }
+
+      .format-option input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .format-option label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 500;
+        transition: all 0.12s ease;
+      }
+
+      .format-option label:hover {
+        border-color: var(--accent);
+        background: var(--accent-light);
+      }
+
+      .format-option input:checked + label {
+        border-color: var(--accent);
+        background: var(--accent-light);
+        color: var(--accent);
+      }
+
+      .format-badge {
+        font-size: 9px;
+        opacity: 0.6;
+        font-weight: 400;
+      }
+
+      .status-box {
+        margin: 8px 0;
+        padding: 10px 12px;
+        border-radius: var(--radius);
+        font-size: 12px;
+        line-height: 1.5;
+        border: 1px solid transparent;
+      }
+
+      .success {
+        background: var(--success-bg);
+        color: #065f46;
+        border: 1px solid #a7f3d0;
+        border-radius: var(--radius);
+        padding: 10px 12px;
+        margin: 8px 0;
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .error {
+        background: var(--error-bg);
+        color: #991b1b;
+        border: 1px solid #fecaca;
+        border-radius: var(--radius);
+        padding: 10px 12px;
+        margin: 8px 0;
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .info {
+        background: var(--info-bg);
+        color: #1e40af;
+        border: 1px solid #bfdbfe;
+        border-radius: var(--radius);
+        padding: 10px 12px;
+        margin: 8px 0;
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .warning {
+        background: var(--warning-bg);
+        color: #92400e;
+        border: 1px solid #fde68a;
+        border-radius: var(--radius);
+        padding: 10px 12px;
+        margin: 8px 0;
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .preview {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        background: var(--surface);
+        display: none;
+      }
+
+      .preview.has-content {
+        display: block;
+      }
+
+      .preview-header {
+        font-size: 12px;
+        font-weight: 600;
+        padding: 8px 12px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      .tree-view {
+        font-family: "SF Mono", "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
+        font-size: 11px;
+        padding: 12px;
+        line-height: 1.8;
+        color: var(--text);
+      }
+
+      .stats {
+        font-size: 11px;
+        color: var(--text-secondary);
+        padding: 8px 12px;
+        background: var(--bg);
+        border-top: 1px solid var(--border);
+      }
+
+      .stats div {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 2px 0;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 3px;
+        background: var(--border);
+        border-radius: 2px;
+        overflow: hidden;
+        display: none;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: var(--accent);
+        width: 0%;
+        transition: width 0.3s ease;
+      }
+
+      .debug-panel {
+        display: none;
+        margin-top: 8px;
+        padding: 12px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        max-height: 480px;
+        overflow-y: auto;
+      }
+
+      .debug-panel.visible {
+        display: block;
+      }
+
+      .tab-buttons {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 8px;
+      }
+
+      .tab-btn {
+        flex: 1;
+        padding: 6px 8px;
+        font-size: 11px;
+        font-weight: 600;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text-secondary);
+        cursor: pointer;
+        border-radius: 6px;
+        transition: all 0.12s ease;
+      }
+
+      .tab-btn.active {
+        background: var(--accent);
+        color: white;
+        border-color: var(--accent);
+      }
+
+      .node-list {
+        max-height: 240px;
+        overflow-y: auto;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        margin: 6px 0;
+      }
+
+      .node-item {
+        padding: 6px 10px;
+        border-bottom: 1px solid var(--border);
+        cursor: pointer;
+        font-size: 11px;
+        font-family: "SF Mono", "Cascadia Code", monospace;
+        transition: background 0.1s ease;
+      }
+
+      .node-item:last-child {
+        border-bottom: none;
+      }
+
+      .node-item:hover {
+        background: var(--accent-light);
+      }
+
+      .node-item.selected {
+        background: var(--accent-light);
+        border-left: 3px solid var(--accent);
+      }
+
+      .html-content {
+        background: var(--surface);
+        padding: 8px;
+        border-radius: 6px;
+        font-family: "SF Mono", monospace;
+        font-size: 10px;
+        max-height: 200px;
+        overflow-y: auto;
+        margin: 6px 0;
+        white-space: pre-wrap;
+        word-break: break-all;
+        border: 1px solid var(--border);
+      }
+
+      .level-info {
+        background: var(--info-bg);
+        padding: 8px 10px;
+        border-radius: 6px;
+        margin: 6px 0;
+        border-left: 3px solid var(--accent);
+        font-size: 11px;
+      }
+
+      .correction-info {
+        background: var(--success-bg);
+        padding: 10px;
+        border-radius: var(--radius);
+        margin: 8px 0;
+        border: 1px solid #a7f3d0;
+        font-size: 11px;
+        line-height: 1.5;
+      }
+
+      .loading-spinner {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border: 2px solid rgba(255,255,255,0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      .tree-indent { color: var(--border-hover); }
+      .tree-text { color: var(--text); }
+      .tree-meta { color: var(--text-secondary); font-size: 10px; }
+
+      .fade-in {
+        animation: fadeIn 0.2s ease;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(4px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      .inline-code {
+        font-family: "SF Mono", "Cascadia Code", monospace;
+        font-size: 11px;
+        background: var(--bg);
+        padding: 1px 4px;
+        border-radius: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h3>Mindmap Extractor <span class="version-badge">v6.0</span></h3>
+        <p>Extract and export NotebookLM mindmaps</p>
+      </div>
+
+      <div class="section">
+        <button id="detectCorrectedBtn" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          Detect Mindmap
+        </button>
+      </div>
+
+      <div class="format-selector" id="formatSelector">
+        <div class="format-selector-title">Export Format</div>
+        <div class="format-options">
+          <div class="format-option">
+            <input type="radio" name="format" value="mm" id="fmt-mm" checked />
+            <label for="fmt-mm">FreeMind <span class="format-badge">.mm</span></label>
+          </div>
+          <div class="format-option">
+            <input type="radio" name="format" value="xml" id="fmt-xml" />
+            <label for="fmt-xml">Generic XML <span class="format-badge">.xml</span></label>
+          </div>
+          <div class="format-option">
+            <input type="radio" name="format" value="opml" id="fmt-opml" />
+            <label for="fmt-opml">OPML <span class="format-badge">.opml</span></label>
+          </div>
+          <div class="format-option">
+            <input type="radio" name="format" value="excalidraw" id="fmt-excalidraw" />
+            <label for="fmt-excalidraw">Excalidraw <span class="format-badge">.excalidraw</span></label>
+          </div>
+        </div>
+
+        <div style="margin-top: 8px;">
+          <button id="convertBtn" class="btn btn-success" disabled>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export Mindmap
+          </button>
+        </div>
+      </div>
+
+      <div class="progress-bar" id="progressBar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+
+      <div id="status"></div>
+      <div id="preview" class="preview"></div>
+
+      <div style="margin-top: 8px;">
+        <button id="debugCorrectedBtn" class="btn btn-ghost">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          Debug Mode
+        </button>
+      </div>
+
+      <div class="debug-panel" id="debugPanel">
+        <div class="tab-buttons">
+          <button class="tab-btn active" id="nodesTab">X-Level Analysis</button>
+          <button class="tab-btn" id="htmlTab">Full HTML</button>
+        </div>
+
+        <div id="nodesContent">
+          <p style="font-size: 11px; font-weight: 600; margin: 0 0 4px 0;">All Detected Nodes</p>
+          <div class="level-info" id="levelInfo"></div>
+          <div class="node-list" id="nodeList"></div>
+          <button id="useSelectedBtn" class="btn btn-primary" disabled style="margin-top: 6px;">
+            Extract with Selected Root
+          </button>
+        </div>
+
+        <div id="htmlContent" style="display:none">
+          <p style="font-size: 11px; font-weight: 600; margin: 0 0 4px 0;">Complete HTML (including hidden elements)</p>
+          <div class="html-content" id="htmlDisplay"></div>
+          <button id="downloadHtmlBtn" class="btn btn-ghost" style="margin-top: 6px;">
+            Download Complete HTML
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
