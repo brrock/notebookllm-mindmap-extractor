@@ -1,9 +1,7 @@
 // NotebookLM Mindmap Extractor - Complete Parent-Child Logic v6.2
-console.log(
-  "🗺️ NotebookLM Mindmap Extractor v6.2 - Complete Parent-Child Logic loaded"
-);
+console.log("🗺️ NotebookLM Mindmap Extractor v6.2 - Complete Parent-Child Logic loaded");
 
-if (typeof globalDebugData === 'undefined') {
+if (typeof globalDebugData === "undefined") {
   var globalDebugData = null;
 }
 
@@ -37,8 +35,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   const timeout = setTimeout(() => {
     console.error("⏰ Operation timed out after 25 seconds");
     sendResponse({
-      error:
-        "Operation timed out. Try refreshing the page and ensure the mindmap is fully loaded.",
+      error: "Operation timed out. Try refreshing the page and ensure the mindmap is fully loaded.",
     });
   }, 25000);
 
@@ -80,10 +77,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     }
   } else if (request.action === "extractWithRoot") {
     try {
-      console.log(
-        "✅ Extracting with complete parent-child logic:",
-        request.rootNodeId
-      );
+      console.log("✅ Extracting with complete parent-child logic:", request.rootNodeId);
 
       Promise.resolve()
         .then(() => extractWithCompleteHierarchy(request.rootNodeId))
@@ -117,9 +111,7 @@ async function extractMindmapWithCompleteLogic() {
       const svgElements = document.querySelectorAll("svg");
       if (svgElements.length === 0) {
         reject(
-          new Error(
-            "No SVG elements found. Make sure the mindmap is fully loaded and visible."
-          )
+          new Error("No SVG elements found. Make sure the mindmap is fully loaded and visible."),
         );
         return;
       }
@@ -137,33 +129,24 @@ async function extractMindmapWithCompleteLogic() {
 
       // COMPLETE LOGIC: Group nodes by X-coordinate levels (same X = same hierarchy level)
       const nodesByLevel = groupNodesByXCoordinateLevel(allNodes);
-      console.log(
-        `📊 Grouped nodes into ${
-          Object.keys(nodesByLevel).length
-        } X-coordinate levels`
-      );
+      console.log(`📊 Grouped nodes into ${Object.keys(nodesByLevel).length} X-coordinate levels`);
 
       // COMPLETE LOGIC: Extract connections with left-center/right-center detection
-      const connections = extractConnectionsWithDirectionAnalysis(
-        svgElements,
-        allNodes
-      );
-      console.log(
-        `🔗 Found ${connections.length} connections with direction analysis`
-      );
+      const connections = extractConnectionsWithDirectionAnalysis(svgElements, allNodes);
+      console.log(`🔗 Found ${connections.length} connections with direction analysis`);
 
       // COMPLETE LOGIC: Build parent-child map using consecutive level validation
       const parentChildMap = buildParentChildMapWithLevelValidation(
         connections,
         nodesByLevel,
-        allNodes
+        allNodes,
       );
 
       // COMPLETE LOGIC: Build hierarchy with deduplication and level validation
       const hierarchy = buildCompleteHierarchyWithDeduplication(
         allNodes,
         parentChildMap,
-        nodesByLevel
+        nodesByLevel,
       );
 
       resolve(hierarchy);
@@ -208,10 +191,8 @@ function extractAllUniqueNodes(svgElements) {
           allNodes.push(nodeData);
           nodeTextSet.add(nodeData.text.toLowerCase().trim());
           nodePositionMap.set(
-            `${Math.round(nodeData.position.x)}_${Math.round(
-              nodeData.position.y
-            )}`,
-            nodeData.id
+            `${Math.round(nodeData.position.x)}_${Math.round(nodeData.position.y)}`,
+            nodeData.id,
           );
           nodeId++;
           console.log(`✅ Added unique node: "${nodeData.text}"`);
@@ -236,8 +217,7 @@ function extractCompleteNodeData(element, nodeId, index) {
     parentGroup = element.closest("g.node") || element.parentElement;
     actualElement = parentGroup || element;
   } else if (element.tagName?.toLowerCase() === "g") {
-    const textElement =
-      element.querySelector("text.node-name") || element.querySelector("text");
+    const textElement = element.querySelector("text.node-name") || element.querySelector("text");
     if (textElement) {
       text = textElement.textContent?.trim();
       parentGroup = element;
@@ -277,17 +257,12 @@ function getAccurateElementPosition(element) {
   // COMPLETE LOGIC: Precise transform parsing
   const transform = element.getAttribute("transform");
   if (transform) {
-    const match = transform.match(
-      /translate\(\s*([-\d\.]+)\s*,\s*([-\d\.]+)\s*\)/
-    );
+    const match = transform.match(/translate\(\s*([-\d\.]+)\s*,\s*([-\d\.]+)\s*\)/);
     if (match) {
       x = parseFloat(match[1]) || 0;
       y = parseFloat(match[2]) || 0;
       console.log(
-        `📍 Accurate position: (${x}, ${y}) for "${element.textContent?.substring(
-          0,
-          20
-        )}..."`
+        `📍 Accurate position: (${x}, ${y}) for "${element.textContent?.substring(0, 20)}..."`,
       );
       return { x, y };
     }
@@ -392,9 +367,7 @@ function calculateCompleteConnectionPoints(bounds) {
 
 function isUniqueNode(nodeData, nodeTextSet, nodePositionMap) {
   const textKey = nodeData.text.toLowerCase().trim();
-  const positionKey = `${Math.round(nodeData.position.x)}_${Math.round(
-    nodeData.position.y
-  )}`;
+  const positionKey = `${Math.round(nodeData.position.x)}_${Math.round(nodeData.position.y)}`;
 
   // Check for duplicate text
   if (nodeTextSet.has(textKey)) {
@@ -408,14 +381,10 @@ function isUniqueNode(nodeData, nodeTextSet, nodePositionMap) {
     const currentX = Math.round(nodeData.position.x);
     const currentY = Math.round(nodeData.position.y);
 
-    const distance = Math.sqrt(
-      (currentX - existingX) ** 2 + (currentY - existingY) ** 2
-    );
+    const distance = Math.sqrt((currentX - existingX) ** 2 + (currentY - existingY) ** 2);
 
     if (distance <= tolerance) {
-      console.log(
-        `🔄 Position duplicate detected: distance ${distance} <= ${tolerance}`
-      );
+      console.log(`🔄 Position duplicate detected: distance ${distance} <= ${tolerance}`);
       return false;
     }
   }
@@ -426,7 +395,7 @@ function isUniqueNode(nodeData, nodeTextSet, nodePositionMap) {
 // ============= COMPLETE X-COORDINATE LEVEL GROUPING =============
 function groupNodesByXCoordinateLevel(nodes) {
   console.log(
-    "📊 COMPLETE LOGIC: Grouping nodes by X-coordinate LEVELS (same X = same hierarchy level)..."
+    "📊 COMPLETE LOGIC: Grouping nodes by X-coordinate LEVELS (same X = same hierarchy level)...",
   );
 
   const nodesByLevel = {};
@@ -449,7 +418,7 @@ function groupNodesByXCoordinateLevel(nodes) {
   sortedXLevels.forEach((x, levelIndex) => {
     const count = nodesByLevel[x].length;
     console.log(
-      `  Level ${levelIndex}: X=${x}, Nodes=${count} (same hierarchy depth, different parents possible)`
+      `  Level ${levelIndex}: X=${x}, Nodes=${count} (same hierarchy depth, different parents possible)`,
     );
     nodesByLevel[x].forEach((node) => {
       console.log(`    - "${node.text.substring(0, 30)}..."`);
@@ -461,9 +430,7 @@ function groupNodesByXCoordinateLevel(nodes) {
 
 // ============= COMPLETE CONNECTION ANALYSIS WITH DIRECTION =============
 function extractConnectionsWithDirectionAnalysis(svgElements, nodes) {
-  console.log(
-    "🔗 COMPLETE LOGIC: Extracting connections with direction analysis..."
-  );
+  console.log("🔗 COMPLETE LOGIC: Extracting connections with direction analysis...");
 
   const connections = [];
 
@@ -475,16 +442,11 @@ function extractConnectionsWithDirectionAnalysis(svgElements, nodes) {
       ...Array.from(svg.querySelectorAll("polyline")),
     ];
 
-    console.log(
-      `Found ${connectionElements.length} potential connection elements`
-    );
+    console.log(`Found ${connectionElements.length} potential connection elements`);
 
     connectionElements.forEach((connElement) => {
       try {
-        const connectionData = analyzeConnectionWithCompleteLogic(
-          connElement,
-          nodes
-        );
+        const connectionData = analyzeConnectionWithCompleteLogic(connElement, nodes);
         if (connectionData) {
           connections.push(connectionData);
         }
@@ -494,9 +456,7 @@ function extractConnectionsWithDirectionAnalysis(svgElements, nodes) {
     });
   });
 
-  console.log(
-    `✅ Analyzed ${connections.length} valid connections with complete logic`
-  );
+  console.log(`✅ Analyzed ${connections.length} valid connections with complete logic`);
   return connections;
 }
 
@@ -544,8 +504,8 @@ function analyzeConnectionWithCompleteLogic(connElement, nodes) {
       console.log(
         `🔗 COMPLETE Connection: "${parentNode.text.substring(
           0,
-          20
-        )}..." → "${childNode.text.substring(0, 20)}..."`
+          20,
+        )}..." → "${childNode.text.substring(0, 20)}..."`,
       );
 
       return {
@@ -559,7 +519,7 @@ function analyzeConnectionWithCompleteLogic(connElement, nodes) {
       };
     } else {
       console.warn(
-        `⚠️ Invalid connection: child X(${childNode.position.x}) not > parent X(${parentNode.position.x})`
+        `⚠️ Invalid connection: child X(${childNode.position.x}) not > parent X(${parentNode.position.x})`,
       );
     }
   }
@@ -575,15 +535,11 @@ function findNodeByRightCenterConnection(startPoint, nodes, tolerance = 25) {
     const rightCenter = node.connectionPoints.find((cp) => cp.side === "right");
     if (rightCenter) {
       const distance = Math.sqrt(
-        (startPoint.x - rightCenter.x) ** 2 +
-          (startPoint.y - rightCenter.y) ** 2
+        (startPoint.x - rightCenter.x) ** 2 + (startPoint.y - rightCenter.y) ** 2,
       );
       if (distance <= tolerance) {
         console.log(
-          `🎯 COMPLETE: Found parent node "${node.text.substring(
-            0,
-            20
-          )}..." at right center`
+          `🎯 COMPLETE: Found parent node "${node.text.substring(0, 20)}..." at right center`,
         );
         return true;
       }
@@ -600,14 +556,11 @@ function findNodeByLeftCenterConnection(endPoint, nodes, tolerance = 25) {
     const leftCenter = node.connectionPoints.find((cp) => cp.side === "left");
     if (leftCenter) {
       const distance = Math.sqrt(
-        (endPoint.x - leftCenter.x) ** 2 + (endPoint.y - leftCenter.y) ** 2
+        (endPoint.x - leftCenter.x) ** 2 + (endPoint.y - leftCenter.y) ** 2,
       );
       if (distance <= tolerance) {
         console.log(
-          `🎯 COMPLETE: Found child node "${node.text.substring(
-            0,
-            20
-          )}..." at left center`
+          `🎯 COMPLETE: Found child node "${node.text.substring(0, 20)}..." at left center`,
         );
         return true;
       }
@@ -620,8 +573,7 @@ function parseCompletePathData(pathData) {
   if (!pathData) return [];
 
   const points = [];
-  const commands =
-    pathData.match(/[MmLlHhVvCcSsQqTtAaZz][^MmLlHhVvCcSsQqTtAaZz]*/g) || [];
+  const commands = pathData.match(/[MmLlHhVvCcSsQqTtAaZz][^MmLlHhVvCcSsQqTtAaZz]*/g) || [];
 
   let currentX = 0,
     currentY = 0;
@@ -695,14 +647,8 @@ function parsePointsAttribute(pointsAttr) {
 }
 
 // ============= COMPLETE PARENT-CHILD MAP WITH LEVEL VALIDATION =============
-function buildParentChildMapWithLevelValidation(
-  connections,
-  nodesByLevel,
-  allNodes
-) {
-  console.log(
-    "🔗 COMPLETE LOGIC: Building parent-child map with level validation..."
-  );
+function buildParentChildMapWithLevelValidation(connections, nodesByLevel, allNodes) {
+  console.log("🔗 COMPLETE LOGIC: Building parent-child map with level validation...");
 
   const parentChildMap = {};
   const childToParentMap = new Map(); // Ensure each child has only one parent
@@ -718,12 +664,8 @@ function buildParentChildMapWithLevelValidation(
       const childX = conn.childNode.position.x;
 
       // COMPLETE LOGIC: Validate consecutive levels
-      const parentLevelIndex = xLevels.findIndex(
-        (x) => Math.abs(x - parentX) <= 5
-      );
-      const childLevelIndex = xLevels.findIndex(
-        (x) => Math.abs(x - childX) <= 5
-      );
+      const parentLevelIndex = xLevels.findIndex((x) => Math.abs(x - parentX) <= 5);
+      const childLevelIndex = xLevels.findIndex((x) => Math.abs(x - childX) <= 5);
 
       if (childLevelIndex === parentLevelIndex + 1) {
         const parentId = conn.parentNode.id;
@@ -732,27 +674,21 @@ function buildParentChildMapWithLevelValidation(
         // Check if child already has a parent
         if (childToParentMap.has(childId)) {
           const existingParentId = childToParentMap.get(childId);
-          const existingParent = allNodes.find(
-            (n) => n.id === existingParentId
-          );
+          const existingParent = allNodes.find((n) => n.id === existingParentId);
 
           // Choose better parent based on distance and Y-coordinate proximity
           if (
-            shouldReplaceParentWithCompleteLogic(
-              existingParent,
-              conn.parentNode,
-              conn.childNode
-            )
+            shouldReplaceParentWithCompleteLogic(existingParent, conn.parentNode, conn.childNode)
           ) {
             console.log(
-              `🔄 COMPLETE: Replacing parent for "${conn.childNode.text}": "${existingParent.text}" → "${conn.parentNode.text}"`
+              `🔄 COMPLETE: Replacing parent for "${conn.childNode.text}": "${existingParent.text}" → "${conn.parentNode.text}"`,
             );
 
             // Remove from old parent
             if (parentChildMap[existingParentId]) {
-              parentChildMap[existingParentId] = parentChildMap[
-                existingParentId
-              ].filter((id) => id !== childId);
+              parentChildMap[existingParentId] = parentChildMap[existingParentId].filter(
+                (id) => id !== childId,
+              );
             }
 
             // Add to new parent
@@ -763,7 +699,7 @@ function buildParentChildMapWithLevelValidation(
             childToParentMap.set(childId, parentId);
           } else {
             console.log(
-              `🚫 COMPLETE: Keeping existing parent for "${conn.childNode.text}": "${existingParent.text}"`
+              `🚫 COMPLETE: Keeping existing parent for "${conn.childNode.text}": "${existingParent.text}"`,
             );
           }
         } else {
@@ -775,44 +711,34 @@ function buildParentChildMapWithLevelValidation(
           childToParentMap.set(childId, parentId);
 
           console.log(
-            `✅ COMPLETE: Level ${parentLevelIndex} → Level ${childLevelIndex}: "${conn.parentNode.text}" → "${conn.childNode.text}"`
+            `✅ COMPLETE: Level ${parentLevelIndex} → Level ${childLevelIndex}: "${conn.parentNode.text}" → "${conn.childNode.text}"`,
           );
         }
       } else {
         console.warn(
-          `⚠️ COMPLETE: Invalid level connection: Level ${parentLevelIndex} → Level ${childLevelIndex}`
+          `⚠️ COMPLETE: Invalid level connection: Level ${parentLevelIndex} → Level ${childLevelIndex}`,
         );
       }
     }
   });
 
   console.log(
-    `🔗 COMPLETE Parent-child relationships: ${
-      Object.keys(parentChildMap).length
-    } parents`
+    `🔗 COMPLETE Parent-child relationships: ${Object.keys(parentChildMap).length} parents`,
   );
   Object.entries(parentChildMap).forEach(([parentId, childIds]) => {
     const parentNode = allNodes.find((n) => n.id === parentId);
     const parentText = parentNode?.text || parentId;
-    console.log(
-      `  "${parentText.substring(0, 20)}..." → ${childIds.length} children`
-    );
+    console.log(`  "${parentText.substring(0, 20)}..." → ${childIds.length} children`);
   });
 
   return parentChildMap;
 }
 
-function shouldReplaceParentWithCompleteLogic(
-  existingParent,
-  newParent,
-  childNode
-) {
+function shouldReplaceParentWithCompleteLogic(existingParent, newParent, childNode) {
   // COMPLETE LOGIC: Criteria for choosing the better parent
 
   // 1. Prefer parent with closer X-coordinate (immediate previous level)
-  const existingXDiff = Math.abs(
-    childNode.position.x - existingParent.position.x
-  );
+  const existingXDiff = Math.abs(childNode.position.x - existingParent.position.x);
   const newXDiff = Math.abs(childNode.position.x - newParent.position.x);
 
   if (Math.abs(existingXDiff - newXDiff) > 50) {
@@ -820,9 +746,7 @@ function shouldReplaceParentWithCompleteLogic(
   }
 
   // 2. Prefer parent with closer Y-coordinate (vertical proximity)
-  const existingYDiff = Math.abs(
-    childNode.position.y - existingParent.position.y
-  );
+  const existingYDiff = Math.abs(childNode.position.y - existingParent.position.y);
   const newYDiff = Math.abs(childNode.position.y - newParent.position.y);
 
   if (Math.abs(existingYDiff - newYDiff) > 30) {
@@ -834,14 +758,8 @@ function shouldReplaceParentWithCompleteLogic(
 }
 
 // ============= COMPLETE HIERARCHY BUILDING WITH DEDUPLICATION =============
-function buildCompleteHierarchyWithDeduplication(
-  allNodes,
-  parentChildMap,
-  nodesByLevel
-) {
-  console.log(
-    "🏗️ COMPLETE LOGIC: Building hierarchy with deduplication and level validation..."
-  );
+function buildCompleteHierarchyWithDeduplication(allNodes, parentChildMap, nodesByLevel) {
+  console.log("🏗️ COMPLETE LOGIC: Building hierarchy with deduplication and level validation...");
 
   if (allNodes.length === 0) {
     throw new Error("No nodes available for complete hierarchy building");
@@ -856,12 +774,10 @@ function buildCompleteHierarchyWithDeduplication(
     allNodes,
     rootNode,
     parentChildMap,
-    nodesByLevel
+    nodesByLevel,
   );
 
-  console.log(
-    `✅ Built COMPLETE hierarchy with ${hierarchy.nodes.length} unique nodes`
-  );
+  console.log(`✅ Built COMPLETE hierarchy with ${hierarchy.nodes.length} unique nodes`);
 
   // Final validation
   validateCompleteHierarchy(hierarchy.nodes);
@@ -877,9 +793,7 @@ function findRootNodeByXLevel(nodesByLevel) {
   const rootX = xLevels[0];
   const rootCandidates = nodesByLevel[rootX];
 
-  console.log(
-    `🎯 COMPLETE Root X-coordinate: ${rootX}, Candidates: ${rootCandidates.length}`
-  );
+  console.log(`🎯 COMPLETE Root X-coordinate: ${rootX}, Candidates: ${rootCandidates.length}`);
 
   if (rootCandidates.length === 1) {
     return rootCandidates[0];
@@ -887,8 +801,7 @@ function findRootNodeByXLevel(nodesByLevel) {
 
   // If multiple candidates at root level, choose the most central one vertically
   const centerY =
-    rootCandidates.reduce((sum, node) => sum + node.position.y, 0) /
-    rootCandidates.length;
+    rootCandidates.reduce((sum, node) => sum + node.position.y, 0) / rootCandidates.length;
 
   return rootCandidates.reduce((closest, node) => {
     const distFromCenter = Math.abs(node.position.y - centerY);
@@ -897,15 +810,8 @@ function findRootNodeByXLevel(nodesByLevel) {
   });
 }
 
-function buildHierarchyBFSWithCompleteLogic(
-  allNodes,
-  rootNode,
-  parentChildMap,
-  nodesByLevel
-) {
-  console.log(
-    "🌳 COMPLETE LOGIC: Building hierarchy using BFS with strict deduplication..."
-  );
+function buildHierarchyBFSWithCompleteLogic(allNodes, rootNode, parentChildMap, nodesByLevel) {
+  console.log("🌳 COMPLETE LOGIC: Building hierarchy using BFS with strict deduplication...");
 
   const hierarchyNodes = [];
   const processedNodes = new Set(); // Strict tracking of processed nodes
@@ -934,7 +840,7 @@ function buildHierarchyBFSWithCompleteLogic(
     console.log(
       `🔍 COMPLETE: Processing node "${allNodes
         .find((n) => n.id === nodeId)
-        ?.text?.substring(0, 20)}..." with ${childIds.length} children`
+        ?.text?.substring(0, 20)}..." with ${childIds.length} children`,
     );
 
     childIds.forEach((childId) => {
@@ -944,18 +850,16 @@ function buildHierarchyBFSWithCompleteLogic(
           // COMPLETE LOGIC: X-level validation - child should be at next level
           const parentNode = allNodes.find((n) => n.id === nodeId);
           const parentLevelIndex = xLevels.findIndex(
-            (x) => Math.abs(x - parentNode.position.x) <= 5
+            (x) => Math.abs(x - parentNode.position.x) <= 5,
           );
-          const childLevelIndex = xLevels.findIndex(
-            (x) => Math.abs(x - childNode.position.x) <= 5
-          );
+          const childLevelIndex = xLevels.findIndex((x) => Math.abs(x - childNode.position.x) <= 5);
 
           if (childLevelIndex === parentLevelIndex + 1) {
             // Strict validation: ensure child is not already in hierarchy
             const existingHierarchyIndex = nodeIdToHierarchyIndex.get(childId);
             if (existingHierarchyIndex !== undefined) {
               console.warn(
-                `⚠️ COMPLETE: Attempted to add duplicate node: "${childNode.text}" already exists at index ${existingHierarchyIndex}`
+                `⚠️ COMPLETE: Attempted to add duplicate node: "${childNode.text}" already exists at index ${existingHierarchyIndex}`,
               );
               return;
             }
@@ -976,12 +880,12 @@ function buildHierarchyBFSWithCompleteLogic(
             console.log(
               `  ✅ COMPLETE: Added child: "${childNode.text.substring(
                 0,
-                20
-              )}..." at level ${level + 1}`
+                20,
+              )}..." at level ${level + 1}`,
             );
           } else {
             console.warn(
-              `  ❌ COMPLETE: Skipped invalid child: level mismatch ${parentLevelIndex} → ${childLevelIndex}`
+              `  ❌ COMPLETE: Skipped invalid child: level mismatch ${parentLevelIndex} → ${childLevelIndex}`,
             );
           }
         }
@@ -989,7 +893,7 @@ function buildHierarchyBFSWithCompleteLogic(
         console.log(
           `  🔄 COMPLETE: Skipped already processed child: "${
             allNodes.find((n) => n.id === childId)?.text
-          }"`
+          }"`,
         );
       }
     });
@@ -999,12 +903,7 @@ function buildHierarchyBFSWithCompleteLogic(
   allNodes.forEach((node) => {
     if (!processedNodes.has(node.id)) {
       // Find appropriate parent based on X-level (previous level)
-      const appropriateParent = findParentByXLevelComplete(
-        node,
-        hierarchyNodes,
-        allNodes,
-        xLevels
-      );
+      const appropriateParent = findParentByXLevelComplete(node, hierarchyNodes, allNodes, xLevels);
 
       if (appropriateParent) {
         hierarchyNodes.push({
@@ -1019,8 +918,8 @@ function buildHierarchyBFSWithCompleteLogic(
         console.log(
           `🔗 COMPLETE: Attached orphan "${node.text.substring(
             0,
-            20
-          )}..." to "${appropriateParent.text.substring(0, 20)}..."`
+            20,
+          )}..." to "${appropriateParent.text.substring(0, 20)}..."`,
         );
       }
     }
@@ -1032,16 +931,9 @@ function buildHierarchyBFSWithCompleteLogic(
   };
 }
 
-function findParentByXLevelComplete(
-  orphanNode,
-  hierarchyNodes,
-  allNodes,
-  xLevels
-) {
+function findParentByXLevelComplete(orphanNode, hierarchyNodes, allNodes, xLevels) {
   // COMPLETE LOGIC: Find the appropriate parent from the previous X-level
-  const orphanLevelIndex = xLevels.findIndex(
-    (x) => Math.abs(x - orphanNode.position.x) <= 5
-  );
+  const orphanLevelIndex = xLevels.findIndex((x) => Math.abs(x - orphanNode.position.x) <= 5);
 
   if (orphanLevelIndex <= 0) {
     // If at root level or invalid, attach to root
@@ -1051,9 +943,7 @@ function findParentByXLevelComplete(
   const parentLevelX = xLevels[orphanLevelIndex - 1];
   const potentialParents = hierarchyNodes.filter((hierNode) => {
     const originalNode = allNodes.find((n) => n.id === hierNode.id);
-    return (
-      originalNode && Math.abs(originalNode.position.x - parentLevelX) <= 5
-    );
+    return originalNode && Math.abs(originalNode.position.x - parentLevelX) <= 5;
   });
 
   if (potentialParents.length === 0) {
@@ -1068,9 +958,7 @@ function findParentByXLevelComplete(
     if (!parentNode || !closestNode) return closest;
 
     const parentDist = Math.abs(orphanNode.position.y - parentNode.position.y);
-    const closestDist = Math.abs(
-      orphanNode.position.y - closestNode.position.y
-    );
+    const closestDist = Math.abs(orphanNode.position.y - closestNode.position.y);
 
     return parentDist < closestDist ? parent : closest;
   });
@@ -1106,9 +994,7 @@ function validateCompleteHierarchy(hierarchyNodes) {
 
   if (duplicates.length > 0) {
     console.error("❌ COMPLETE: Duplicates found in hierarchy:", duplicates);
-    throw new Error(
-      `COMPLETE hierarchy validation failed: ${duplicates.length} duplicates found`
-    );
+    throw new Error(`COMPLETE hierarchy validation failed: ${duplicates.length} duplicates found`);
   }
 
   console.log("✅ COMPLETE: Hierarchy validation passed - no duplicates found");
@@ -1133,7 +1019,7 @@ async function performCompleteDebugExtraction() {
       nodesByLevel = groupNodesByXCoordinateLevel(allNodes);
       connections = extractConnectionsWithDirectionAnalysis(
         document.querySelectorAll("svg"),
-        allNodes
+        allNodes,
       );
 
       if (Object.keys(nodesByLevel).length > 0) {
@@ -1143,7 +1029,7 @@ async function performCompleteDebugExtraction() {
           parentChildMap = buildParentChildMapWithLevelValidation(
             connections,
             nodesByLevel,
-            allNodes
+            allNodes,
           );
         }
 
@@ -1177,18 +1063,13 @@ async function performCompleteDebugExtraction() {
 }
 
 function extractWithCompleteHierarchy(selectedRootId) {
-  console.log(
-    "✅ Extracting with COMPLETE hierarchy logic using selected root:",
-    selectedRootId
-  );
+  console.log("✅ Extracting with COMPLETE hierarchy logic using selected root:", selectedRootId);
 
   if (!globalDebugData || !globalDebugData.allNodes) {
     throw new Error("Debug data not available. Run Debug Mode first.");
   }
 
-  const selectedRoot = globalDebugData.allNodes.find(
-    (node) => node.id === selectedRootId
-  );
+  const selectedRoot = globalDebugData.allNodes.find((node) => node.id === selectedRootId);
   if (!selectedRoot) {
     throw new Error("Selected root node not found.");
   }
@@ -1204,21 +1085,17 @@ function extractWithCompleteHierarchy(selectedRootId) {
     const parentChildMap = buildParentChildMapWithLevelValidation(
       globalDebugData.connections,
       nodesByLevel,
-      globalDebugData.allNodes
+      globalDebugData.allNodes,
     );
     hierarchy = buildHierarchyBFSWithCompleteLogic(
       globalDebugData.allNodes,
       selectedRoot,
       parentChildMap,
-      nodesByLevel
+      nodesByLevel,
     );
   } else {
     // Fallback to X-level only hierarchy
-    hierarchy = buildXLevelHierarchyComplete(
-      globalDebugData.allNodes,
-      selectedRoot,
-      nodesByLevel
-    );
+    hierarchy = buildXLevelHierarchyComplete(globalDebugData.allNodes, selectedRoot, nodesByLevel);
   }
 
   // Final validation
@@ -1227,7 +1104,7 @@ function extractWithCompleteHierarchy(selectedRootId) {
   console.log(
     "✅ COMPLETE: Extracted with complete parent-child mapping:",
     hierarchy.nodes.length,
-    "unique nodes"
+    "unique nodes",
   );
 
   return hierarchy;
@@ -1263,19 +1140,14 @@ function buildXLevelHierarchyComplete(allNodes, rootNode, nodesByLevel) {
     const previousLevelNodes = nodesByLevel[previousX] || [];
 
     console.log(
-      `📍 COMPLETE Level ${levelIndex}: X=${currentX}, Nodes=${currentLevelNodes.length}`
+      `📍 COMPLETE Level ${levelIndex}: X=${currentX}, Nodes=${currentLevelNodes.length}`,
     );
 
     currentLevelNodes.forEach((node) => {
       if (!processedNodes.has(node.id)) {
         // Find closest parent from previous level based on Y-coordinate
-        const closestParent = findClosestParentByYComplete(
-          node,
-          previousLevelNodes
-        );
-        const parentInHierarchy = hierarchyNodes.find(
-          (h) => h.id === closestParent.id
-        );
+        const closestParent = findClosestParentByYComplete(node, previousLevelNodes);
+        const parentInHierarchy = hierarchyNodes.find((h) => h.id === closestParent.id);
 
         if (parentInHierarchy) {
           hierarchyNodes.push({
@@ -1290,8 +1162,8 @@ function buildXLevelHierarchyComplete(allNodes, rootNode, nodesByLevel) {
           console.log(
             `  ✅ COMPLETE: "${node.text.substring(
               0,
-              20
-            )}..." → parent: "${closestParent.text.substring(0, 20)}..."`
+              20,
+            )}..." → parent: "${closestParent.text.substring(0, 20)}..."`,
           );
         }
       }
@@ -1344,6 +1216,4 @@ function extractCompleteHTML() {
   }
 }
 
-console.log(
-  "🛠️ COMPLETE NotebookLM Extractor v6.2 with Full Parent-Child Logic loaded"
-);
+console.log("🛠️ COMPLETE NotebookLM Extractor v6.2 with Full Parent-Child Logic loaded");

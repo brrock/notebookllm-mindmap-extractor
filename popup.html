@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <meta charset="utf-8" />
@@ -22,14 +22,15 @@
         --info: #2563eb;
         --info-bg: #eff6ff;
         --radius: 10px;
-        --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
       }
 
       body {
         width: 384px;
         padding: 0;
         margin: 0;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         background: var(--bg);
         color: var(--text);
         font-size: 13px;
@@ -449,27 +450,42 @@
         display: inline-block;
         width: 14px;
         height: 14px;
-        border: 2px solid rgba(255,255,255,0.3);
+        border: 2px solid rgba(255, 255, 255, 0.3);
         border-top-color: white;
         border-radius: 50%;
         animation: spin 0.6s linear infinite;
       }
 
       @keyframes spin {
-        to { transform: rotate(360deg); }
+        to {
+          transform: rotate(360deg);
+        }
       }
 
-      .tree-indent { color: var(--border-hover); }
-      .tree-text { color: var(--text); }
-      .tree-meta { color: var(--text-secondary); font-size: 10px; }
+      .tree-indent {
+        color: var(--border-hover);
+      }
+      .tree-text {
+        color: var(--text);
+      }
+      .tree-meta {
+        color: var(--text-secondary);
+        font-size: 10px;
+      }
 
       .fade-in {
         animation: fadeIn 0.2s ease;
       }
 
       @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(4px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+          opacity: 0;
+          transform: translateY(4px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
       .inline-code {
@@ -490,7 +506,19 @@
 
       <div class="section">
         <button id="detectCorrectedBtn" class="btn btn-primary">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.3-4.3" />
+          </svg>
           Detect Mindmap
         </button>
       </div>
@@ -512,13 +540,28 @@
           </div>
           <div class="format-option">
             <input type="radio" name="format" value="excalidraw" id="fmt-excalidraw" />
-            <label for="fmt-excalidraw">Excalidraw <span class="format-badge">.excalidraw</span></label>
+            <label for="fmt-excalidraw"
+              >Excalidraw <span class="format-badge">.excalidraw</span></label
+            >
           </div>
         </div>
 
-        <div style="margin-top: 8px;">
+        <div style="margin-top: 8px">
           <button id="convertBtn" class="btn btn-success" disabled>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
             Export Mindmap
           </button>
         </div>
@@ -531,9 +574,21 @@
       <div id="status"></div>
       <div id="preview" class="preview"></div>
 
-      <div style="margin-top: 8px;">
+      <div style="margin-top: 8px">
         <button id="debugCorrectedBtn" class="btn btn-ghost">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M12 20h9" />
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+          </svg>
           Debug Mode
         </button>
       </div>
@@ -545,18 +600,20 @@
         </div>
 
         <div id="nodesContent">
-          <p style="font-size: 11px; font-weight: 600; margin: 0 0 4px 0;">All Detected Nodes</p>
+          <p style="font-size: 11px; font-weight: 600; margin: 0 0 4px 0">All Detected Nodes</p>
           <div class="level-info" id="levelInfo"></div>
           <div class="node-list" id="nodeList"></div>
-          <button id="useSelectedBtn" class="btn btn-primary" disabled style="margin-top: 6px;">
+          <button id="useSelectedBtn" class="btn btn-primary" disabled style="margin-top: 6px">
             Extract with Selected Root
           </button>
         </div>
 
-        <div id="htmlContent" style="display:none">
-          <p style="font-size: 11px; font-weight: 600; margin: 0 0 4px 0;">Complete HTML (including hidden elements)</p>
+        <div id="htmlContent" style="display: none">
+          <p style="font-size: 11px; font-weight: 600; margin: 0 0 4px 0">
+            Complete HTML (including hidden elements)
+          </p>
           <div class="html-content" id="htmlDisplay"></div>
-          <button id="downloadHtmlBtn" class="btn btn-ghost" style="margin-top: 6px;">
+          <button id="downloadHtmlBtn" class="btn btn-ghost" style="margin-top: 6px">
             Download Complete HTML
           </button>
         </div>

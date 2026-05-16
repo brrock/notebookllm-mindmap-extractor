@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-
   const detectCorrectedBtn = document.getElementById("detectCorrectedBtn");
   const debugCorrectedBtn = document.getElementById("debugCorrectedBtn");
   const convertBtn = document.getElementById("convertBtn");
@@ -129,10 +128,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     } catch (error) {
       console.error("❌ Detection error:", error);
-      showError(
-        error.message +
-          "<br><br>💡 <strong>NotebookLM Mindmap Not Found.</strong>"
-      );
+      showError(error.message + "<br><br>💡 <strong>NotebookLM Mindmap Not Found.</strong>");
       hideProgress();
     } finally {
       updateButton(detectCorrectedBtn, "🚀 Detect Mindmap", false);
@@ -211,10 +207,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
       const tab = tabs[0];
 
-      showProgress(
-        "Processing ALL nodes with corrected consecutive level mapping...",
-        60
-      );
+      showProgress("Processing ALL nodes with corrected consecutive level mapping...", 60);
 
       // FIXED: Use correct action name that matches content.js
       const response = await chrome.tabs.sendMessage(tab.id, {
@@ -258,10 +251,7 @@ document.addEventListener("DOMContentLoaded", function () {
     debugPanel.style.display = "block";
 
     // Show corrected X-level information
-    if (
-      debugResponse.nodesByLevel &&
-      Object.keys(debugResponse.nodesByLevel).length > 0
-    ) {
+    if (debugResponse.nodesByLevel && Object.keys(debugResponse.nodesByLevel).length > 0) {
       const xLevels = Object.keys(debugResponse.nodesByLevel)
         .map((x) => parseFloat(x))
         .sort((a, b) => a - b);
@@ -271,8 +261,7 @@ document.addEventListener("DOMContentLoaded", function () {
         Hierarchy Levels: <strong>${xLevels.length}</strong><br>
         ${xLevels
           .map(
-            (x, level) =>
-              `Level ${level}: X=${x} (${debugResponse.nodesByLevel[x].length} nodes)`
+            (x, level) => `Level ${level}: X=${x} (${debugResponse.nodesByLevel[x].length} nodes)`,
           )
           .join("<br>")}
       `;
@@ -287,14 +276,9 @@ document.addEventListener("DOMContentLoaded", function () {
         nodeItem.dataset.nodeId = node.id;
 
         const nodeInfo = `
-          <strong>Node ${index + 1}:</strong> "${truncateText(
-          node.text,
-          50
-        )}"<br>
+          <strong>Node ${index + 1}:</strong> "${truncateText(node.text, 50)}"<br>
           <span style="color: #666;">
-            X: ${Math.round(node.position?.x || 0)}, Y: ${Math.round(
-          node.position?.y || 0
-        )} | 
+            X: ${Math.round(node.position?.x || 0)}, Y: ${Math.round(node.position?.y || 0)} | 
             Type: ${node.elementType || "Unknown"} | 
             ${node.isDetectedRoot ? "🎯 CORRECTED ROOT" : "Level Node"}
           </span>
@@ -326,12 +310,10 @@ document.addEventListener("DOMContentLoaded", function () {
       const connectionsHtml = `
         <div style="margin: 10px 0; padding: 10px; background: #e8f5e8; border-radius: 4px; font-size: 11px;">
           <strong>🔗 CORRECTED Connection Analysis:</strong><br>
-          • Found Connections: <strong>${
-            debugResponse.connections.length
-          }</strong><br>
-          • Connection Types: ${[
-            ...new Set(debugResponse.connections.map((c) => c.type)),
-          ].join(", ")}<br>
+          • Found Connections: <strong>${debugResponse.connections.length}</strong><br>
+          • Connection Types: ${[...new Set(debugResponse.connections.map((c) => c.type))].join(
+            ", ",
+          )}<br>
           <strong>✅ Corrected Parent → Child (Level N → N+1):</strong><br>
           ${debugResponse.connections
             .slice(0, 5)
@@ -339,8 +321,8 @@ document.addEventListener("DOMContentLoaded", function () {
               (conn, _i) =>
                 `• ${truncateText(conn.parentNode.text, 15)} → ${truncateText(
                   conn.childNode.text,
-                  15
-                )}`
+                  15,
+                )}`,
             )
             .join("<br>")}
           ${debugResponse.connections.length > 5 ? "<br>... and more" : ""}
@@ -357,12 +339,8 @@ document.addEventListener("DOMContentLoaded", function () {
         Found <strong>${
           debugResponse.allNodes?.length || 0
         }</strong> nodes with corrected X-level analysis.<br>
-        X-Levels: <strong>${
-          Object.keys(debugResponse.nodesByLevel || {}).length
-        }</strong> | 
-        Connections: <strong>${
-          debugResponse.connections?.length || 0
-        }</strong><br>
+        X-Levels: <strong>${Object.keys(debugResponse.nodesByLevel || {}).length}</strong> | 
+        Connections: <strong>${debugResponse.connections?.length || 0}</strong><br>
         Auto-detected root: <strong>"${
           debugResponse.detectedRoot?.text || "None detected"
         }"</strong><br>
@@ -392,7 +370,7 @@ document.addEventListener("DOMContentLoaded", function () {
           <strong>✅ Node Selected for Corrected Extraction</strong><br>
           Text: <strong>"${truncateText(selectedNode.text, 40)}"</strong><br>
           X-Position: <strong>${Math.round(
-            selectedNode.position?.x || 0
+            selectedNode.position?.x || 0,
           )}</strong> (Hierarchy Level)<br>
           Type: <strong>${selectedNode.elementType}</strong><br>
           <br><strong>This will use CORRECTED X-level logic to map ALL ${
@@ -411,13 +389,8 @@ document.addEventListener("DOMContentLoaded", function () {
         📊 <strong>Corrected Analysis:</strong><br>
         • Total Nodes Extracted: <strong>${results.nodes.length}</strong><br>
         • Hierarchy Depth: <strong>${stats.maxLevel + 1} levels</strong><br>
-        • Root Node: <strong>"${truncateText(
-          results.rootNode.text,
-          35
-        )}"</strong><br>
-        • Quality Score: <strong>${calculateQualityScore(
-          stats
-        )}%</strong><br><br>
+        • Root Node: <strong>"${truncateText(results.rootNode.text, 35)}"</strong><br>
+        • Quality Score: <strong>${calculateQualityScore(stats)}%</strong><br><br>
         🔧 <strong>All nodes mapped with CORRECTED X-level consecutive parent-child logic!</strong>
       </div>
     `;
@@ -427,9 +400,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function analyzeCorrectedStructure(nodes) {
     const levels = nodes.map((node) => node.level || 0);
     const levelCounts = {};
-    const xPositions = nodes
-      .map((node) => node.xPosition || 0)
-      .filter((x) => x !== 0);
+    const xPositions = nodes.map((node) => node.xPosition || 0).filter((x) => x !== 0);
 
     levels.forEach((level) => {
       levelCounts[level] = (levelCounts[level] || 0) + 1;
@@ -454,10 +425,7 @@ document.addEventListener("DOMContentLoaded", function () {
         • Total Nodes: <strong>${results.nodes.length}</strong><br>
         • Hierarchy Depth: <strong>${stats.maxLevel + 1} levels</strong><br>
         • X-Coordinate Levels: <strong>${stats.xLevels}</strong><br>
-        • Root Node: <strong>"${truncateText(
-          results.rootNode.text,
-          35
-        )}"</strong><br><br>
+        • Root Node: <strong>"${truncateText(results.rootNode.text, 35)}"</strong><br><br>
         🔧 <strong>Parent-Child Mapping:</strong> Corrected X-Level Logic<br>
         🎯 <strong>Quality:</strong> ${calculateQualityScore(stats)}%
       </div>
@@ -504,16 +472,14 @@ document.addEventListener("DOMContentLoaded", function () {
           Analyze complete structure with corrected X-level data.
         </div>
       `;
-      }
+      },
     );
   }
 
   // ============= REST OF UTILITY FUNCTIONS =============
   async function performConversion() {
     if (!mindmapData) {
-      showError(
-        "No mindmap data available. Please run corrected detection first."
-      );
+      showError("No mindmap data available. Please run corrected detection first.");
       return;
     }
 
@@ -544,14 +510,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function showConversionSuccess(filename, format) {
     const formatNames = {
-      mm: 'FreeMind (.mm)',
-      xml: 'Generic XML (.xml)',
-      opml: 'OPML (.opml)',
-      excalidraw: 'Excalidraw (.excalidraw)',
+      mm: "FreeMind (.mm)",
+      xml: "Generic XML (.xml)",
+      opml: "OPML (.opml)",
+      excalidraw: "Excalidraw (.excalidraw)",
     };
-    const extraNote = format === 'excalidraw'
-      ? '<br>🎨 <strong>Open in</strong> <a href="https://excalidraw.com" target="_blank" style="color:#3b82f6;">excalidraw.com</a> to view and edit the mindmap visualization'
-      : '<br>🔧 <strong>Hierarchy:</strong> X-level parent-child mapping preserved';
+    const extraNote =
+      format === "excalidraw"
+        ? '<br>🎨 <strong>Open in</strong> <a href="https://excalidraw.com" target="_blank" style="color:#3b82f6;">excalidraw.com</a> to view and edit the mindmap visualization'
+        : "<br>🔧 <strong>Hierarchy:</strong> X-level parent-child mapping preserved";
     status.innerHTML = `
       <div class="success">
         <strong>Export Successful!</strong><br><br>
@@ -623,9 +590,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const indent = "  ".repeat(depth);
       const connector = index === children.length - 1 ? "└─" : "├─";
       const text = truncateText(child.text, 45);
-      const xInfo = child.xPosition
-        ? ` (X:${Math.round(child.xPosition)})`
-        : "";
+      const xInfo = child.xPosition ? ` (X:${Math.round(child.xPosition)})` : "";
 
       html += `<div>${indent}${connector} ${text}<span style="color:#999;font-size:10px;">${xInfo}</span></div>`;
 
@@ -686,7 +651,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function convertToGenericXML(data) {
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
     xml += `<mindmap title="${escapeXML(
-      data.rootNode.text
+      data.rootNode.text,
     )}" created="${new Date().toISOString()}" algorithm="corrected-x-level">\n`;
     xml += generateGenericNode(data.rootNode, data.nodes, 1);
     xml += `</mindmap>`;
@@ -697,7 +662,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const indent = "  ".repeat(depth);
     const xPos = node.xPosition ? ` x-position="${node.xPosition}"` : "";
     let xml = `${indent}<node id="${node.id}" text="${escapeXML(
-      node.text
+      node.text,
     )}" level="${node.level || 0}"${xPos}>\n`;
 
     const children = allNodes.filter((n) => n.parentId === node.id);
@@ -755,22 +720,75 @@ document.addEventListener("DOMContentLoaded", function () {
     let seed = Math.floor(Math.random() * 2147483647);
     let idx = 0;
 
-    const branchPalette = ['#a5d8ff', '#ffd43b', '#b2f2bb', '#ffc9c9', '#d0bfff', '#96f2d7', '#ffec99', '#4dabf7', '#f783ac', '#69db7c'];
-    const rootStyle = { bg: '#ffec99', fontSize: 36, paddingX: 28, paddingY: 24, minW: 280, maxW: 560, maxChars: 18, lineHeight: 1.15 };
+    const branchPalette = [
+      "#a5d8ff",
+      "#ffd43b",
+      "#b2f2bb",
+      "#ffc9c9",
+      "#d0bfff",
+      "#96f2d7",
+      "#ffec99",
+      "#4dabf7",
+      "#f783ac",
+      "#69db7c",
+    ];
+    const rootStyle = {
+      bg: "#ffec99",
+      fontSize: 36,
+      paddingX: 28,
+      paddingY: 24,
+      minW: 280,
+      maxW: 560,
+      maxChars: 18,
+      lineHeight: 1.15,
+    };
     const styleByLevel = [
       rootStyle,
-      { fontSize: 28, paddingX: 22, paddingY: 18, minW: 200, maxW: 340, maxH: 120, maxChars: 18, lineHeight: 1.25 },
-      { fontSize: 20, paddingX: 18, paddingY: 14, minW: 180, maxW: 320, maxH: 170, maxChars: 24, lineHeight: 1.25 },
-      { fontSize: 16, paddingX: 16, paddingY: 12, minW: 160, maxW: 300, maxH: 220, maxChars: 28, lineHeight: 1.25 },
+      {
+        fontSize: 28,
+        paddingX: 22,
+        paddingY: 18,
+        minW: 200,
+        maxW: 340,
+        maxH: 120,
+        maxChars: 18,
+        lineHeight: 1.25,
+      },
+      {
+        fontSize: 20,
+        paddingX: 18,
+        paddingY: 14,
+        minW: 180,
+        maxW: 320,
+        maxH: 170,
+        maxChars: 24,
+        lineHeight: 1.25,
+      },
+      {
+        fontSize: 16,
+        paddingX: 16,
+        paddingY: 12,
+        minW: 160,
+        maxW: 300,
+        maxH: 220,
+        maxChars: 28,
+        lineHeight: 1.25,
+      },
     ];
 
-    function uid() { return 'e' + (++idx); }
-    function rng() { return seed = (seed * 16807) % 2147483647; }
-    function nextIdx() { return 'a' + elements.length; }
+    function uid() {
+      return "e" + ++idx;
+    }
+    function rng() {
+      return (seed = (seed * 16807) % 2147483647);
+    }
+    function nextIdx() {
+      return "a" + elements.length;
+    }
 
     function textLines(text, maxChars) {
-      const words = (text || '').replace(/\s+/g, ' ').trim().split(' ').filter(Boolean);
-      if (!words.length) return [''];
+      const words = (text || "").replace(/\s+/g, " ").trim().split(" ").filter(Boolean);
+      if (!words.length) return [""];
       const lines = [];
       let current = words[0];
       for (let i = 1; i < words.length; i++) {
@@ -790,18 +808,24 @@ document.addEventListener("DOMContentLoaded", function () {
       const level = Math.min(node.level || 0, styleByLevel.length - 1);
       const base = styleByLevel[level];
       const branchIndex = Math.max(0, (node.topLevelIndex ?? 0) % branchPalette.length);
-      const wrapped = textLines(node.text || '', base.maxChars);
+      const wrapped = textLines(node.text || "", base.maxChars);
       const longest = wrapped.reduce((max, line) => Math.max(max, line.length), 0);
-      const width = Math.max(base.minW, Math.min(base.maxW, longest * base.fontSize * 0.58 + base.paddingX * 2));
+      const width = Math.max(
+        base.minW,
+        Math.min(base.maxW, longest * base.fontSize * 0.58 + base.paddingX * 2),
+      );
       const textHeight = wrapped.length * base.fontSize * base.lineHeight;
-      const unclampedHeight = Math.max(base.fontSize + base.paddingY * 2, textHeight + base.paddingY * 2);
+      const unclampedHeight = Math.max(
+        base.fontSize + base.paddingY * 2,
+        textHeight + base.paddingY * 2,
+      );
       const height = base.maxH ? Math.min(base.maxH, unclampedHeight) : unclampedHeight;
       return {
         bg: level === 0 ? rootStyle.bg : branchPalette[branchIndex],
         fontSize: base.fontSize,
         width,
         height,
-        text: wrapped.join('\n'),
+        text: wrapped.join("\n"),
         lineHeight: base.lineHeight,
       };
     }
@@ -851,9 +875,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     if (rootChildren.length) {
-      const baseAngles = rootChildren.length === 1
-        ? [-Math.PI / 2]
-        : Array.from({ length: rootChildren.length }, (_, index) => (-Math.PI / 2) + (Math.PI * 2 * index / rootChildren.length));
+      const baseAngles =
+        rootChildren.length === 1
+          ? [-Math.PI / 2]
+          : Array.from(
+              { length: rootChildren.length },
+              (_, index) => -Math.PI / 2 + (Math.PI * 2 * index) / rootChildren.length,
+            );
 
       rootChildren.forEach((child, index) => {
         const angle = baseAngles[index];
@@ -876,10 +904,12 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function overlaps(a, b, gap = 28) {
-      return a.x < b.x + b.width + gap
-        && a.x + a.width + gap > b.x
-        && a.y < b.y + b.height + gap
-        && a.y + a.height + gap > b.y;
+      return (
+        a.x < b.x + b.width + gap &&
+        a.x + a.width + gap > b.x &&
+        a.y < b.y + b.height + gap &&
+        a.y + a.height + gap > b.y
+      );
     }
 
     function moveNode(nodeId, dx, dy) {
@@ -910,8 +940,8 @@ document.addEventListener("DOMContentLoaded", function () {
           vy /= len;
           const push = 36;
 
-          moveNode(a.id, -vx * push / 2, -vy * push / 2);
-          moveNode(b.id, vx * push / 2, vy * push / 2);
+          moveNode(a.id, (-vx * push) / 2, (-vy * push) / 2);
+          moveNode(b.id, (vx * push) / 2, (vy * push) / 2);
           changed = true;
         }
       }
@@ -932,17 +962,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
       elements.push({
         id: rectId,
-        type: 'rectangle',
+        type: "rectangle",
         x: pos.x,
         y: pos.y,
         width: box.width,
         height: box.height,
         angle: 0,
-        strokeColor: '#343a40',
+        strokeColor: "#343a40",
         backgroundColor: box.bg,
-        fillStyle: 'solid',
+        fillStyle: "solid",
         strokeWidth: 4,
-        strokeStyle: 'solid',
+        strokeStyle: "solid",
         roughness: 0,
         opacity: 100,
         groupIds: [],
@@ -953,27 +983,27 @@ document.addEventListener("DOMContentLoaded", function () {
         version: 1,
         versionNonce: rng(),
         isDeleted: false,
-        boundElements: [{ id: textId, type: 'text' }],
+        boundElements: [{ id: textId, type: "text" }],
         updated: now,
         link: null,
         locked: false,
       });
 
       const textWidth = Math.max(40, box.width - 28);
-      const textHeight = box.text.split('\n').length * box.fontSize * box.lineHeight;
+      const textHeight = box.text.split("\n").length * box.fontSize * box.lineHeight;
       elements.push({
         id: textId,
-        type: 'text',
+        type: "text",
         x: pos.x + (box.width - textWidth) / 2,
         y: pos.y + (box.height - textHeight) / 2,
         width: textWidth,
         height: textHeight,
         angle: 0,
-        strokeColor: '#343a40',
-        backgroundColor: 'transparent',
-        fillStyle: 'solid',
+        strokeColor: "#343a40",
+        backgroundColor: "transparent",
+        fillStyle: "solid",
         strokeWidth: 4,
-        strokeStyle: 'solid',
+        strokeStyle: "solid",
         roughness: 0,
         opacity: 100,
         groupIds: [],
@@ -991,10 +1021,10 @@ document.addEventListener("DOMContentLoaded", function () {
         text: box.text,
         fontSize: box.fontSize,
         fontFamily: 5,
-        textAlign: 'center',
-        verticalAlign: 'middle',
+        textAlign: "center",
+        verticalAlign: "middle",
         containerId: rectId,
-        originalText: node.text || '',
+        originalText: node.text || "",
         autoResize: true,
         lineHeight: box.lineHeight,
       });
@@ -1017,34 +1047,35 @@ document.addEventListener("DOMContentLoaded", function () {
       const lineId = uid();
       const pKey = rectIds[node.parentId];
       const cKey = rectIds[node.id];
-      const branchColor = branchPalette[Math.max(0, (node.topLevelIndex ?? 0) % branchPalette.length)];
+      const branchColor =
+        branchPalette[Math.max(0, (node.topLevelIndex ?? 0) % branchPalette.length)];
 
       [pKey, cKey].forEach((key) => {
         const rect = elements.find((e) => e.id === key);
         if (rect) {
           if (!rect.boundElements) rect.boundElements = [];
-          rect.boundElements.push({ id: lineId, type: 'line' });
+          rect.boundElements.push({ id: lineId, type: "line" });
         }
       });
 
       elements.unshift({
         id: lineId,
-        type: 'line',
+        type: "line",
         x: parentCenterX,
         y: parentCenterY,
         width: Math.abs(childCenterX - parentCenterX),
         height: Math.abs(childCenterY - parentCenterY),
         angle: 0,
-        strokeColor: '#343a40',
+        strokeColor: "#343a40",
         backgroundColor: branchColor,
-        fillStyle: 'solid',
+        fillStyle: "solid",
         strokeWidth: 4,
-        strokeStyle: 'solid',
+        strokeStyle: "solid",
         roughness: 0,
         opacity: 100,
         groupIds: [],
         frameId: null,
-        index: 'Z' + idx,
+        index: "Z" + idx,
         roundness: { type: 2 },
         seed: rng(),
         version: 1,
@@ -1067,14 +1098,18 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     });
 
-    return JSON.stringify({
-      type: 'excalidraw',
-      version: 2,
-      source: 'https://excalidraw.com',
-      elements,
-      appState: { viewBackgroundColor: '#ffffff', gridSize: 20 },
-      files: {},
-    }, null, 2);
+    return JSON.stringify(
+      {
+        type: "excalidraw",
+        version: 2,
+        source: "https://excalidraw.com",
+        elements,
+        appState: { viewBackgroundColor: "#ffffff", gridSize: 20 },
+        files: {},
+      },
+      null,
+      2,
+    );
   }
 
   function generateFilename(rootText, format) {
@@ -1099,9 +1134,12 @@ document.addEventListener("DOMContentLoaded", function () {
       excalidraw: "application/octet-stream",
     };
 
-    const normalizedFilename = format === 'excalidraw'
-      ? (filename.endsWith('.excalidraw') ? filename : `${filename.replace(/\.(json|txt)$/i, '')}.excalidraw`)
-      : filename;
+    const normalizedFilename =
+      format === "excalidraw"
+        ? filename.endsWith(".excalidraw")
+          ? filename
+          : `${filename.replace(/\.(json|txt)$/i, "")}.excalidraw`
+        : filename;
 
     const blob = new Blob([content], { type: mimeTypes[format] });
     const url = URL.createObjectURL(blob);
@@ -1120,15 +1158,13 @@ document.addEventListener("DOMContentLoaded", function () {
             resolve(downloadId);
           }
           setTimeout(() => URL.revokeObjectURL(url), 1000);
-        }
+        },
       );
     });
   }
 
   function truncateText(text, maxLength) {
-    return text && text.length > maxLength
-      ? text.substring(0, maxLength) + "..."
-      : text;
+    return text && text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
   }
 
   function escapeXML(text) {

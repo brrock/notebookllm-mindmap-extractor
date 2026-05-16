@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "fmt": "oxfmt"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "oxfmt": "^0.50.0"
+  }
+}
