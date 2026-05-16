@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("🚀 Corrected popup script v6.0 loaded");
 
   const detectCorrectedBtn = document.getElementById("detectCorrectedBtn");
   const debugCorrectedBtn = document.getElementById("debugCorrectedBtn");
@@ -337,7 +336,7 @@ document.addEventListener("DOMContentLoaded", function () {
           ${debugResponse.connections
             .slice(0, 5)
             .map(
-              (conn, i) =>
+              (conn, _i) =>
                 `• ${truncateText(conn.parentNode.text, 15)} → ${truncateText(
                   conn.childNode.text,
                   15
